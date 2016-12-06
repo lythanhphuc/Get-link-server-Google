@@ -1,6 +1,5 @@
 <?php
 // Code đã được edit lại bởi Kai0205 - http://lythanhphuc.com , Download code miễn phí tại ltpvn.net
-
 error_reporting(E_ERROR | E_PARSE);
 
 function curl($url){
@@ -24,24 +23,15 @@ function curl($url){
 		return $page;
 }
 
-function cut_str($str, $left, $right){
-	$str = substr(stristr($str, $left) , strlen($left));
-	$leftLen = strlen(stristr($str, $right));
-	$leftLen = $leftLen ? -($leftLen) : strlen($str);
-	$str = substr($str, 0, $leftLen);
-	return $str;
-}
-
 $url = $_GET['link'];
 
 if(isset($url)){
-	$curTemp = curl($url);
-	$curTemp = cut_str($curTemp,'url_encoded_fmt_stream_map','"]');
+	$curTemp = curl("https://api.anivn.com/?url=".$url);
 	if ($curTemp <> "") {
-		$curList = explode('\u0026',$curTemp);
+		$curList = explode('"',$curTemp);
 		foreach ($curList as $curl) {
-		$curl = trim(substr($curl, strpos($curl,'videoplayback')-strlen($curl)));
-		$curl = "https://redirector.googlevideo.com/".$curl;
+		$curl = trim(substr($curl, strpos($curl,'https')-strlen($curl)));
+		$curl = str_replace('\/', '/', $curl);
 		$curl = urldecode($curl);
 			 if ($curl <> "" ){
 				if (strpos($curl,'itag=37') !== false) {$v1080p=$curl;}
@@ -61,5 +51,4 @@ if(isset($url)){
 		}
 	}
 }
-
 ?>
