@@ -1,7 +1,6 @@
 <?php
-// Code đã được edit lại bởi Kai0205 - http://lythanhphuc.com , Download code miễn phí tại ltpvn.net
-
 error_reporting(E_ERROR | E_PARSE);
+// Code đã được edit bởi Kai0205 - http://lythanhphuc.com , Download code miễn phí tại ltpvn.net
 
 function curl($url){
 		$ch = @curl_init();
@@ -10,7 +9,7 @@ function curl($url){
 		$head[] = "Keep-Alive: 300";
 		$head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
 		$head[] = "Accept-Language: en-us,en;q=0.5";
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36');
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36');
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
