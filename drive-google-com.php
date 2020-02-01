@@ -1,54 +1,108 @@
 <?php
-// Code đã được edit lại bởi Kai0205 - http://lythanhphuc.com , Download code miễn phí tại ltpvn.net
-error_reporting(E_ERROR | E_PARSE);
+// (Code gốc gkplugin) Code đã được edit lại bởi #LTP Kai (Night Owl VN) - https://lythanhphuc.com, Code được share miễn phí.
 
-function curl($url){
-		$ch = @curl_init();
-		curl_setopt($ch, CURLOPT_URL, $url);
-		$head[] = "Connection: keep-alive";
-		$head[] = "Keep-Alive: 300";
-		$head[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
-		$head[] = "Accept-Language: en-us,en;q=0.5";
-		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2062.124 Safari/537.36');
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $head);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, TRUE);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
-		$page = curl_exec($ch);
-		curl_close($ch);
-		return $page;
+error_reporting(E_ALL ^ (E_NOTICE | E_WARNING | E_DEPRECATED));
+
+if(strpos($_GET['url'], 'docs.google.com') || strpos($_GET['url'], 'drive.google.com')) {
+	echo get_drive_download($_GET['url']);
+}else {
+	echo 'Not Supported!';
 }
 
-$url = $_GET['link'];
-
-if(isset($url)){
-	$curTemp = curl("https://api.anivn.com/?url=".$url);
-	if ($curTemp <> "") {
-		$curList = explode('"',$curTemp);
-		foreach ($curList as $curl) {
-		$curl = trim(substr($curl, strpos($curl,'https')-strlen($curl)));
-		$curl = str_replace('\/', '/', $curl);
-		$curl = urldecode($curl);
-			 if ($curl <> "" ){
-				if (strpos($curl,'itag=37') !== false) {$v1080p=$curl;}
-				if (strpos($curl,'itag=22') !== false) {$v720p=$curl;}
-				if (strpos($curl,'itag=59') !== false) {$v480p=$curl;}
-				if (strpos($curl,'itag=18') !== false) {$v360p=$curl;}
-			}
+function get_curl($obj){
+	$link = isset($obj['url'])?$obj['url']:NULL;
+	$useheader = isset($obj['showHeader'])?$obj['showHeader']:NULL;
+	$useragent = isset($obj['agent'])?$obj['agent']:NULL;
+	$referer = isset($obj['referer'])?$obj['referer']:NULL;
+	$custheader = isset($obj['requestHeaders'])?$obj['requestHeaders']:NULL;
+	$ucookie = isset($obj['cookie'])?$obj['cookie']:NULL;
+	$encoding = isset($obj['encoding'])?$obj['encoding']:NULL;
+	$mpostfield = isset($obj['data'])?$obj['data']:NULL;
+	$sslverify = isset($obj['sslverify'])?$obj['sslverify']:NULL;
+	$nobody = isset($obj['nobody'])?$obj['nobody']:NULL;
+	//$ipv6 = isset($obj['ipv6'])?$obj['ipv6']:NULL;
+	$method = isset($obj['method'])?$obj['method']:NULL;
+	$usehttpheader = true;
+	$mpost = false;
+	if($method=="POST"){
+		$mpost = true;
+	}
+	if(!$useragent || $useragent==""){
+		$useragent = $_SERVER['HTTP_USER_AGENT'];
+	}
+	if($mpostfield){
+		$arrd = array();
+		foreach($mpostfield as $key => $value){
+			$arrd[] = $key."=".$value;
 		}
-		if($v1080p){
-			echo '<font color="red">1080p:</font> '.$v1080p.'<br><font color="red">720p:</font> '.$v720p.'<br><font color="red">480p:</font> '.$v480p.'<br><font color="red">360p:</font> '.$v360p;
-		} elseif($v720p){
-			echo '<font color="red">720p:</font> '.$v720p.'<br><font color="red">480p:</font> '.$v480p.'<br><font color="red">360p:</font> '.$v360p;
-		} elseif($v480p){
-			echo '<font color="red">480p:</font> '.$v480p.'<br><font color="red">360p:</font> '.$v360p;
-		} else {
-			echo '<font color="red">360p:</font> '.$v360p;
+		$mpostfield = implode("&",$arrd);
+	}
+		
+	$curl = curl_init();
+	$header[0] = "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+	$header[] = "Accept-Language: en-us,en;q=0.5";
+	$header[] = "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7";
+	$header[] = "Keep-Alive: 115";
+	$header[] = "Connection: keep-alive";
+	if($custheader){
+		foreach($custheader as $key => $value){
+			$header[] = $key.": ".$value;
 		}
 	}
+		
+	curl_setopt($curl, CURLOPT_URL, $link);
+	curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	if($useheader){curl_setopt($curl, CURLOPT_HEADER, 1);}
+	if($useragent!=""){curl_setopt($curl, CURLOPT_USERAGENT, $useragent);}
+	if($usehttpheader){curl_setopt($curl, CURLOPT_HTTPHEADER, $header);}
+	if($ucookie!=""){curl_setopt($curl, CURLOPT_COOKIE, str_replace('\\"','"',$ucookie));}
+	if($referer!=""){curl_setopt($curl, CURLOPT_REFERER, $referer);}
+	if($encoding!=""){curl_setopt($curl, CURLOPT_ENCODING, $encoding);}
+	if($mpost){curl_setopt($curl, CURLOPT_POST, 1);}
+	if($mpostfield!=""){curl_setopt($curl, CURLOPT_POSTFIELDS, $mpostfield);}
+	if($nobody){curl_setopt($curl, CURLOPT_NOBODY, 1);}
+	//if($ipv6){curl_setopt($curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);}
+	if($sslverify){
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0); 
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 2);
+	}
+	$result = curl_exec($curl);
+	curl_close($curl);
+	return $result;
 }
-?>
+function get_drive_download($url){
+	$idd = explode("/file/d/",$url);
+	$idd = explode("/",$idd[1]);
+	//$idd = $url;
+	$idd = $idd[0];
+	$linkG = "https://drive.google.com/uc?export=download&confirm=no_antivirus&id=".$idd;
+	$dta = get_curl(array("url"=>$linkG,"sslverify"=>true,"showHeader"=>true));
+	$ck = NULL;
+	$confirm = NULL;
+	try{
+		$ckc = explode("download_warning_",$dta);
+		if(!isset($ckc[1])){
+			throw new Exception();
+		}
+		$ckc = explode(";",$ckc[1]);
+		$ckc = $ckc[0];
+		$ck = "download_warning_".$ckc;
+		$confirm = explode("=",$ck);
+		$confirm = $confirm[1];
+		$fileExt = explode('class="uc-name-size"',$dta);
+		$fileExt = explode('href="',$fileExt[1]);
+		$fileExt = explode('>',$fileExt[1]);
+		$fileExt = explode('<',$fileExt[1]);
+		$fileExt = $fileExt[0];
+	}catch(Exception $e){}
+	$linkG = str_replace("&confirm=no_antivirus&","&confirm=".$confirm."&",$linkG);
+	$dta = get_curl(array("url"=>$linkG,"sslverify"=>true,"showHeader"=>true,"cookie"=>$ck));
+	if(strpos($dta,'he document has move')!==false){
+		$linkD = explode('<A HREF="',$dta);
+		$linkD = explode('">',$linkD[1]);
+		$linkD = $linkD[0];
+	}else{
+		$linkD = 'Không tìm thấy link, có thể link đã bị limit hoặc del.';
+	}
+	return $linkD;
+}
