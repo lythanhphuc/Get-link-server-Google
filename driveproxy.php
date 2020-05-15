@@ -1,4 +1,5 @@
 <?php
+/* Code by #LTP Kai from Night Owl VN - https://nightowlvn.com - https://lythanhphuc.com */
 error_reporting(0);
 
 $ref = $_SERVER['HTTP_REFERER'];
