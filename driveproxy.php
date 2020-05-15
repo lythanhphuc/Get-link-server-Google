@@ -43,7 +43,7 @@ function info($url, $cookie) {
 	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_HEADER, true);
-	curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
+	//curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
 	curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
 	curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
 	curl_setopt($ch, CURLOPT_NOBODY, true);
