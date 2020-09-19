@@ -1,5 +1,8 @@
 <?php
-/* Code by #LTP Kai from Night Owl VN - https://nightowlvn.com - https://lythanhphuc.com */
+/*
+Trong group mình có nói rõ là code không phải của mình, mình đã tìm ra trang blog này chắc là code ở đây mọi người vào tham khảo thử.
+https://viblo.asia/p/chia-se-huong-dan-cai-dat-chi-tiet-source-code-google-drive-proxy-player-script-Qpmlea4klrd
+*/
 error_reporting(0);
 
 $ref = $_SERVER['HTTP_REFERER'];
